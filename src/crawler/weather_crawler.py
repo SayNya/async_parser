@@ -20,7 +20,7 @@ class WeatherCrawler(AbstractCrawler):
         async with AsyncClient() as async_client:
             tasks = []
             for dte in date_list:
-                task = asyncio.create_task(async_client.get_content(self.HEAD_URL + dte))
+                task = asyncio.create_task(async_client.get_content(dte))
                 tasks.append(task)
             t0 = time()
             html_list = await asyncio.gather(*tasks)
