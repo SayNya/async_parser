@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class AbstractClient(ABC):
     @abstractmethod
-    def get_content(self, url):
+    def get_html(self, url):
         pass
 
     def __aenter__(self):
