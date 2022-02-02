@@ -4,12 +4,15 @@ from src.parser.abstract_parser import AbstractParser
 
 
 class WeatherParser(AbstractParser):
-    def parse_content(self, html, dte):
+    async def parse_content(self, html, url):
         bs = BeautifulSoup(html, 'html.parser')
 
         times = bs.find_all('tr', class_='time')
 
-        weather = {}
+        dte = url.split('/')[-1]
+        print(len(times))
+        weather = []
+        test = []
         for tm in times:
             temperature = list(
                 x.strip() for x in tm.find('td', class_='temp').get_text().split('\n') if not x.isspace())
@@ -19,7 +22,8 @@ class WeatherParser(AbstractParser):
             humidity = data[1].get_text().strip().split('…')
             wind_speed = data[2].get_text().strip().split('…')
             wind_direction = tm.find('td', class_='dir').get_text().strip()
-            weather[safe_list_get(temperature, 0, '-')] = {
+
+            weather.append({
                 'date': dte,
                 'day_time': safe_list_get(temperature, 0, '-'),
                 't_min': safe_list_get(temperature, 1, '-'),
@@ -32,8 +36,25 @@ class WeatherParser(AbstractParser):
                 'wind_speed_min': safe_list_get(wind_speed, 0, '-'),
                 'wind_speed_max': safe_list_get(wind_speed, 1, '-'),
                 'wind_direction': wind_direction,
-            }
-        return weather
+                'url': url
+            })
+            test.append([
+                dte,
+                safe_list_get(temperature, 0, '-'),
+                safe_list_get(temperature, 1, '-'),
+                safe_list_get(temperature, 2, '-'),
+                state,
+                safe_list_get(pressure, 0, '-'),
+                safe_list_get(pressure, 1, '-'),
+                safe_list_get(humidity, 0, '-'),
+                safe_list_get(humidity, 1, '-'),
+                safe_list_get(wind_speed, 0, '-'),
+                safe_list_get(wind_speed, 1, '-'),
+                wind_direction,
+                url
+            ])
+        print(len(test), test)
+        return test
 
 
 def safe_list_get(l, idx, default):
