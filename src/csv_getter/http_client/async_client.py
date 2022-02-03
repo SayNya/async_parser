@@ -1,0 +1,21 @@
+import aiohttp
+
+from src.csv_getter.decorators.time_decorator import timeit
+from src.csv_getter.http_client.abstract_client import AbstractClient
+
+
+class AsyncClient(AbstractClient):
+    def __init__(self):
+        self.session = None
+
+    async def __aenter__(self):
+        self.session = aiohttp.ClientSession()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.session.close()
+
+    @timeit
+    async def get_html(self, url):
+        async with self.session.get(url) as response:
+            return await response.read()
