@@ -1,5 +1,6 @@
 import aiohttp
 
+from src.decorators.time_decorator import timeit
 from src.http_client.abstract_client import AbstractClient
 
 
@@ -14,6 +15,7 @@ class AsyncClient(AbstractClient):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.session.close()
 
+    @timeit
     async def get_html(self, url):
         async with self.session.get(url) as response:
             return await response.read()

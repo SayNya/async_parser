@@ -10,9 +10,8 @@ class WeatherScrapper(AbstractScrapper):
 
     async def scrap_weather(self):
         result = []
-
-        async for html, url in self.crawler.crawl_content():
-            data = await self.parser.parse_content(html, url)
+        async for html, url, dte in self.crawler.crawl_content():
+            data = await self.parser.parse_content(html, url, dte)
             result.extend(data)
 
         return result
