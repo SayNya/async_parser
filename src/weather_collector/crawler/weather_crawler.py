@@ -3,8 +3,8 @@ from datetime import date, timedelta
 
 from dotenv import load_dotenv, find_dotenv
 
-from src.csv_getter.crawler.abstract_crawler import AbstractCrawler
-from src.csv_getter.http_client.async_client import AsyncClient
+from src.weather_collector.crawler.abstract_crawler import AbstractCrawler
+from src.weather_collector.http_client.async_client import AsyncClient
 
 load_dotenv(find_dotenv())
 

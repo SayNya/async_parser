@@ -4,7 +4,7 @@ import time
 import aiofiles
 from dotenv import load_dotenv, find_dotenv
 
-from src.csv_getter.storage.abstract_storage import AbstractStorage
+from src.weather_collector.storage.abstract_storage import AbstractStorage
 
 load_dotenv(find_dotenv())
 

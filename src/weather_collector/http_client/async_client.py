@@ -1,7 +1,7 @@
 import aiohttp
 
-from src.csv_getter.decorators.time_decorator import timeit
-from src.csv_getter.http_client.abstract_client import AbstractClient
+from src.weather_collector.decorators.time_decorator import timeit
+from src.weather_collector.http_client.abstract_client import AbstractClient
 
 
 class AsyncClient(AbstractClient):

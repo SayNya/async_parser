@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from starlette.responses import StreamingResponse
 
-from src.api.schemas.queries.weather import WeatherParameters
-from src.api.schemas.responses.weather import WeatherResponse
-from src.api.services.weather.weather_service import Weather
+from database.orm.schemas.queries import WeatherParameters
+from database.services.weather.weather_service import Weather
 
 router = APIRouter(
     prefix='/weather'

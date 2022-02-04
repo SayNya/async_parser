@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from src.csv_getter.parser.abstract_parser import AbstractParser
+from src.weather_collector.parser.abstract_parser import AbstractParser
 
 
 class WeatherParser(AbstractParser):
@@ -15,7 +15,7 @@ class WeatherParser(AbstractParser):
         for tm in times:
             temperature = list(
                 x.strip() for x in tm.find('td', class_='temp').get_text().split('\n') if not x.isspace())
-            state = tm.find('td', class_='icon').get_text().strip()
+            condition = tm.find('td', class_='icon').get_text().strip()
             data = tm.find_all('td', class_='data')
             pressure = data[0].get_text().strip().split('…')
             humidity = data[1].get_text().strip().split('…')
@@ -27,7 +27,7 @@ class WeatherParser(AbstractParser):
                 temperature[0],
                 temperature[1],
                 temperature[2],
-                state,
+                condition,
                 pressure[0],
                 pressure[1],
                 humidity[0],

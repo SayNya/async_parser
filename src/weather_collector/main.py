@@ -1,7 +1,7 @@
 import asyncio
 
-from src.csv_getter.scrapper.weather_scrapper import WeatherScrapper
-from src.csv_getter.storage.csv_storage import CSVStorage
+from src.weather_collector.scrapper.weather_scrapper import WeatherScrapper
+from src.weather_collector.storage.csv_storage import CSVStorage
 
 
 async def main():

@@ -1,6 +1,6 @@
-from src.csv_getter.crawler.weather_crawler import WeatherCrawler
-from src.csv_getter.parser.weather_parser import WeatherParser
-from src.csv_getter.scrapper.abstract_scrapper import AbstractScrapper
+from src.weather_collector.crawler.weather_crawler import WeatherCrawler
+from src.weather_collector.parser.weather_parser import WeatherParser
+from src.weather_collector.scrapper.abstract_scrapper import AbstractScrapper
 
 
 class WeatherScrapper(AbstractScrapper):
