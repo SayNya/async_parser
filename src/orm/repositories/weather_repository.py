@@ -4,8 +4,8 @@ from typing import Callable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from database.orm.models.weather.weather import Weather
-from database.orm.schemas.responses.weather import WeatherResponse
+from src.orm.models.weather.weather import Weather
+from src.orm.schemas.responses.weather import WeatherResponse
 
 
 class WeatherRepository:

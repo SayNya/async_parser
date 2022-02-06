@@ -7,8 +7,8 @@ from prompt_toolkit.eventloop.async_context_manager import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_scoped_session
 from sqlalchemy.orm import Session, sessionmaker
 
-from database.core.settings import settings
-from database.orm.models.base import Base
+from src.core.settings import settings
+from src.orm.models.base import Base
 
 
 class AsyncDatabase:

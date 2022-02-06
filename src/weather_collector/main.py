@@ -8,12 +8,11 @@ async def main():
     weather_scrapper = WeatherScrapper()
     result = await weather_scrapper.scrap_weather()
 
+    #  service
+
     writer = CSVStorage()
-    return await writer.save_content(result)
+    await writer.save_content(result)
 
 
-def get_csv_data():
-    path = asyncio.run(main())
-    return path
-
-get_csv_data()
+if __name__ == '__main__':
+    asyncio.run(main())

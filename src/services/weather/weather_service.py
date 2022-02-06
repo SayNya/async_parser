@@ -26,3 +26,6 @@ class Weather:
                          force_ascii=True, date_unit="ms", default_handler=None)
         response = StreamingResponse(iter([stream.getvalue()]), media_type='text/json')
         return response
+
+# преорбазование
+# repositori

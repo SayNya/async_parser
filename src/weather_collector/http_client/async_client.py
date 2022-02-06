@@ -1,6 +1,6 @@
 import aiohttp
 
-from src.weather_collector.decorators.time_decorator import timeit
+from src.decorators.time_decorator import timeit
 from src.weather_collector.http_client.abstract_client import AbstractClient
 
 
