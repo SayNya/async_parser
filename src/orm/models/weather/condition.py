@@ -5,7 +5,7 @@ from src.orm.models.base import BaseIDModel
 
 
 class Condition(BaseIDModel):
-    __tablename__ = 'conditions'
+    __tablename__ = 'condition'
     title = Column(String(100))
 
-    weather = relationship('WeatherCondition', backref='condition')
+    weather = relationship('Weather', back_populates='conditions', secondary='weather_condition')

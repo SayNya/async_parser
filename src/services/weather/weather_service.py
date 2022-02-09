@@ -1,31 +1,22 @@
-import io
+from typing import List
 
-import pandas as pd
-from fastapi.responses import StreamingResponse
+from src.orm.models import Weather
+from src.orm.repositories import weather_repository, day_time_repository, wind_direction_repository, \
+    condition_repository
+from src.services.base_service import BaseService
 
 
-class Weather:
-    def __init__(self, path):
-        self.path = path
+class WeatherService(BaseService):
 
-    async def get_csv(self):
-        stream = io.StringIO()
-        with open(self.path, encoding='UTF8') as csvfile:
-            for line in csvfile:
-                stream.write(line)
+    async def save_data(self, weather_list: List[dict]):
+        data = []
+        for weather in weather_list:
+            day_time = await day_time_repository.find_by(title=weather.pop('day_time'))
+            conditions = [await condition_repository.find_by(title=condition) for condition in weather.pop('condition')]
+            wind_direction = await wind_direction_repository.find_by(direction=weather.pop('wind_direction'))
+            # data.append(Weather(**weather, day_time=day_time, wind_direction=wind_direction, conditions=conditions))
+            data.append(Weather(**weather))
+        await weather_repository.bulk_create(data)
 
-        response = StreamingResponse(iter([stream.getvalue()]), media_type='text/csv')
-
-        return response
-
-    async def get_json(self):
-        stream = io.StringIO()
-
-        csv_file = pd.DataFrame(pd.read_csv(self.path, sep=";", header=0, index_col=False))
-        csv_file.to_json(stream, orient="records", date_format="epoch", double_precision=10,
-                         force_ascii=True, date_unit="ms", default_handler=None)
-        response = StreamingResponse(iter([stream.getvalue()]), media_type='text/json')
-        return response
-
-# преорбазование
-# repositori
+    # get_weather
+    # pydantic

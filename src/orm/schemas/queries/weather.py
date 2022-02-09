@@ -2,4 +2,5 @@ from pydantic import BaseModel
 
 
 class WeatherParameters(BaseModel):
-    path: str
+    start_date: str
+    end_date: str

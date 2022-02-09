@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from starlette.responses import StreamingResponse
 
-from src.orm.schemas.queries import WeatherParameters
-from src.services.weather.weather_service import Weather
+from src.orm.schemas.queries.weather import WeatherParameters
+from src.services.weather.weather_service import WeatherService
 
 router = APIRouter(
     prefix='/weather'
@@ -17,7 +17,7 @@ router = APIRouter(
     }
 )
 async def read_weather_csv(params: WeatherParameters) -> StreamingResponse:
-    weather = Weather(params.path)
+    weather = WeatherService(params.path)
     return await weather.get_csv()
 
 
@@ -29,5 +29,5 @@ async def read_weather_csv(params: WeatherParameters) -> StreamingResponse:
     }
 )
 async def read_weather_csv(params: WeatherParameters):
-    weather = Weather(params.path)
+    weather = WeatherService(params.path)
     return await weather.get_json()

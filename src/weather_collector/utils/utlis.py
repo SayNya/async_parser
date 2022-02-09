@@ -1,2 +1,5 @@
+from datetime import datetime, timedelta
+
+
 def get_previous_date():
-    pass
+    return (datetime.today() - timedelta(days=1)).date()

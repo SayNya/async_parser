@@ -40,7 +40,7 @@ class AsyncDatabase:
             await conn.run_sync(Base.metadata.create_all)
 
     @asynccontextmanager
-    async def session(self) -> Callable[..., AbstractContextManager[AsyncSession]]:
+    async def session(self):
         session: Session = self._session_factory()
         try:
             yield session

@@ -6,7 +6,7 @@ from src.orm.models.base import BaseIDModel
 
 class Weather(BaseIDModel):
     __tablename__ = 'weather'
-    date = Column(Date)
+    date = Column(String)
     t_min = Column(Integer)
     t_max = Column(Integer)
     pressure_min = Column(Integer)
@@ -17,10 +17,10 @@ class Weather(BaseIDModel):
     wind_speed_max = Column(Integer)
     url = Column(String(100))
 
-    wind_direction_id = Column(Integer, ForeignKey('wind_directions.id'))
+    wind_direction_id = Column(Integer, ForeignKey('wind_direction.id'))
     wind_direction = relationship('WindDirection', back_populates='weather')
 
-    day_time_id = Column(Integer, ForeignKey('day_times.id'))
-    day_time = relationship('DayTime')
+    day_time_id = Column(Integer, ForeignKey('day_time.id'))
+    day_time = relationship('DayTime', back_populates='weather')
 
-    conditions = relationship('WeatherCondition', backref='weather')
+    conditions = relationship('Condition', back_populates='weather', secondary='weather_condition')
