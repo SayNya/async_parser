@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-
+from datetime import datetime
 from src.weather_collector.parser.abstract_parser import AbstractParser
 
 
@@ -9,8 +9,7 @@ class WeatherParser(AbstractParser):
         bs = BeautifulSoup(html, 'html.parser')
 
         url, dte = args
-        # dte = strptime(dte, '%Y-%m-%d')
-
+        dte = datetime.strptime(dte, '%Y-%m-%d').date()
         times = bs.find_all('tr', class_='time')
 
         weather = []

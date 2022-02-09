@@ -7,15 +7,12 @@ class BaseRepository:
     def __init__(self, session_factory) -> None:
         self.session_factory = session_factory
 
-    async def bulk_create(self, data_list):
-        async with self.session_factory() as session:
-            session.add_all(data_list)
-            await session.commit()
-
     async def create(self, model) -> None:
         async with self.session_factory() as session:
-            session.add_all(model)
+            session.add(model)
             await session.commit()
+            await session.refresh(model)
+            return model
 
     async def find_by(self, **parameters: dict):
         async with self.session_factory() as session:

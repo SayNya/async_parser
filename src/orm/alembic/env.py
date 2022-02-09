@@ -6,6 +6,8 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
+
+from src.core.settings import settings
 from src.orm.models import *  # noqa: F403, F401
 
 # this is the Alembic Config object, which provides
@@ -17,7 +19,7 @@ config = context.config
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
-
+config.set_main_option("sqlalchemy.url", settings.database_uri)
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel

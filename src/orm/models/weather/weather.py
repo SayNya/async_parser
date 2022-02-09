@@ -6,7 +6,7 @@ from src.orm.models.base import BaseIDModel
 
 class Weather(BaseIDModel):
     __tablename__ = 'weather'
-    date = Column(String)
+    date = Column(Date)
     t_min = Column(Integer)
     t_max = Column(Integer)
     pressure_min = Column(Integer)
@@ -23,4 +23,4 @@ class Weather(BaseIDModel):
     day_time_id = Column(Integer, ForeignKey('day_time.id'))
     day_time = relationship('DayTime', back_populates='weather')
 
-    conditions = relationship('Condition', back_populates='weather', secondary='weather_condition')
+    condition = relationship('WeatherCondition', back_populates='weather')

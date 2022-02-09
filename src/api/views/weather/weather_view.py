@@ -1,7 +1,9 @@
-from fastapi import APIRouter
-from starlette.responses import StreamingResponse
+from datetime import date
+
+from fastapi import APIRouter, Depends
 
 from src.orm.schemas.queries.weather import WeatherParameters
+from src.orm.schemas.responses.weather import WeatherResponse
 from src.services.weather.weather_service import WeatherService
 
 router = APIRouter(
@@ -10,24 +12,15 @@ router = APIRouter(
 
 
 @router.get(
-    '/csv',
+    '',
     status_code=200,
+    response_model=WeatherResponse,
     responses={
         404: {'description': 'Not Found'},
     }
 )
-async def read_weather_csv(params: WeatherParameters) -> StreamingResponse:
-    weather = WeatherService(params.path)
-    return await weather.get_csv()
+async def read_weather(parameters_schema: WeatherParameters = Depends(),
+                       weather_service: WeatherService = Depends()) -> WeatherResponse:
 
-
-@router.get(
-    '/json',
-    status_code=200,
-    responses={
-        404: {'description': 'Not Found'},
-    }
-)
-async def read_weather_csv(params: WeatherParameters):
-    weather = WeatherService(params.path)
-    return await weather.get_json()
+    a = await weather_service.get_weather(parameters_schema)
+    return a

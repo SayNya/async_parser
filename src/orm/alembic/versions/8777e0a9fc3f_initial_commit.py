@@ -1,8 +1,8 @@
 """Initial commit
 
-Revision ID: 0639b6989782
+Revision ID: 8777e0a9fc3f
 Revises: 
-Create Date: 2022-02-09 10:56:33.674032
+Create Date: 2022-02-09 12:19:47.737160
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0639b6989782'
+revision = '8777e0a9fc3f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -46,7 +46,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
-    sa.Column('date', sa.String(), nullable=True),
+    sa.Column('date', sa.Date(), nullable=True),
     sa.Column('t_min', sa.Integer(), nullable=True),
     sa.Column('t_max', sa.Integer(), nullable=True),
     sa.Column('pressure_min', sa.Integer(), nullable=True),

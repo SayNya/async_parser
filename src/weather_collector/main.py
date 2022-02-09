@@ -10,7 +10,7 @@ async def main():
     weather = await weather_scrapper.scrap_weather()
 
     service = WeatherService()
-    await service.save_data(weather)
+    await service.save_weather(weather)
     # writer = CSVStorage()
     # await writer.save_content(result)
 
