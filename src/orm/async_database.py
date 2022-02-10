@@ -1,7 +1,5 @@
 import contextlib
 from asyncio import current_task
-from contextlib import AbstractContextManager
-from typing import Callable
 
 from prompt_toolkit.eventloop.async_context_manager import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_scoped_session

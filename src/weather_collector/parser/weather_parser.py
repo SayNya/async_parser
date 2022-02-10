@@ -22,7 +22,6 @@ class WeatherParser(AbstractParser):
             humidity = data[1].get_text().strip().split('…')
             wind_speed = data[2].get_text().strip().split('…')
             wind_direction = tm.find('td', class_='dir').get_text().strip()
-
             weather.append({
                 'date': dte,
                 'day_time': temperature[0],

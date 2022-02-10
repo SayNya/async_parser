@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Integer, ForeignKey, SmallInteger, String
+from sqlalchemy import Column, Date, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from src.orm.models.base import BaseIDModel
@@ -23,4 +23,4 @@ class Weather(BaseIDModel):
     day_time_id = Column(Integer, ForeignKey('day_time.id'))
     day_time = relationship('DayTime', back_populates='weather')
 
-    condition = relationship('WeatherCondition', back_populates='weather')
+    conditions = relationship('Condition', back_populates='weather', secondary='weather_condition')

@@ -1,12 +1,12 @@
-from pydantic import BaseModel
 from datetime import date
 
+from pydantic import BaseModel
 from pydantic.class_validators import validator
 
 
 class WeatherParameters(BaseModel):
-    start_date: date = None
-    end_date: date = None
+    start_date: date | None
+    end_date: date | None
 
     @validator('end_date')
     def end_start_date_not_empty(cls, v, values):
@@ -16,6 +16,8 @@ class WeatherParameters(BaseModel):
 
     @validator('end_date')
     def end_after_start(cls, v, values):
+        if not v and not values['start_date']:
+            return v
         if v < values['start_date']:
             raise ValueError('end_date should be before or equal start_day')
         return v

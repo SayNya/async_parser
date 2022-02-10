@@ -8,4 +8,4 @@ class Condition(BaseIDModel):
     __tablename__ = 'condition'
     title = Column(String(100))
 
-    weather = relationship('WeatherCondition', back_populates='condition')
+    weather = relationship('Weather', back_populates='conditions', secondary='weather_condition')

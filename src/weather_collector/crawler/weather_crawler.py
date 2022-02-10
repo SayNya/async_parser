@@ -16,7 +16,7 @@ class WeatherCrawler(AbstractCrawler):
 
     async def crawl_content(self):
 
-        dates = self.get_dates(get_previous_date())
+        dates = self.get_dates(start_date=get_previous_date())
         async with AsyncClient() as async_client:
             for dte in dates:
                 url = f'{self.HEAD_URL}' + dte

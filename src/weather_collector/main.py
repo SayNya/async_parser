@@ -11,6 +11,7 @@ async def main():
 
     service = WeatherService()
     await service.save_weather(weather)
+
     # writer = CSVStorage()
     # await writer.save_content(result)
 
