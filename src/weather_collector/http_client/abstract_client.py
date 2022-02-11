@@ -3,11 +3,13 @@ from abc import ABC, abstractmethod
 
 class AbstractClient(ABC):
     @abstractmethod
-    def get_html(self, url):
+    async def get(self, url: str) -> bytes:
         pass
 
-    def __aenter__(self):
+    async def __aenter__(self):
         pass
 
-    def __aexit__(self, exc_type, exc_val, exc_tb):
-        pass
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if exc_val:
+            print(exc_val)
+            raise exc_type

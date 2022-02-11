@@ -2,6 +2,7 @@ from datetime import date
 
 from pydantic import BaseModel
 
+from src.orm.schemas.responses.condition import ConditionResponse
 from src.orm.schemas.responses.day_time import DayTimeResponse
 from src.orm.schemas.responses.direction import DirectionResponse
 
@@ -19,6 +20,7 @@ class WeatherResponse(BaseModel):
     url: str
     day_time: DayTimeResponse
     wind_direction: DirectionResponse
+    conditions: list[ConditionResponse]
 
     class Config:
         orm_mode = True

@@ -1,3 +1,5 @@
+from datetime import date
+
 from src.weather_collector.crawler.weather_crawler import WeatherCrawler
 from src.weather_collector.parser.weather_parser import WeatherParser
 from src.weather_collector.scrapper.abstract_scrapper import AbstractScrapper
@@ -8,10 +10,10 @@ class WeatherScrapper(AbstractScrapper):
         self.crawler = WeatherCrawler()
         self.parser = WeatherParser()
 
-    async def scrap_weather(self):
+    async def scrap_weather(self, date_list: list[date] | date) -> list[dict]:
         result = []
-        async for html, url, dte in self.crawler.crawl_content():
-            data = await self.parser.parse_content(html, url, dte)
+        async for html, url, current_date in self.crawler.crawl_content(date_list):
+            data = await self.parser.parse_content(html, url, current_date)
             result.extend(data)
 
         return result

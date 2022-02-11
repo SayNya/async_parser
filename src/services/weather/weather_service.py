@@ -1,70 +1,65 @@
-import io
-from typing import List
-
+from fastapi.responses import StreamingResponse
 from pydantic import parse_obj_as
 
 from src.orm.models import Weather, WeatherCondition
-from src.orm.repositories import weather_repository, day_time_repository, wind_direction_repository, \
-    condition_repository, weather_condition_repository
+from src.orm.repositories import WeatherRepository, DayTimeRepository, ConditionRepository, WindDirectionRepository, \
+    WeatherConditionRepository
 from src.orm.schemas.queries.weather import WeatherParameters
 from src.orm.schemas.responses.weather import WeatherResponse
-from src.services.base_service import BaseService
+from src.services.csv.csv_service import CSVService
 
 
-class WeatherService(BaseService):
+class WeatherService:
+    def __init__(self,
+                 weather_repository: WeatherRepository,
+                 day_time_repository: DayTimeRepository,
+                 condition_repository: ConditionRepository,
+                 wind_direction_repository: WindDirectionRepository,
+                 weather_condition_repository: WeatherConditionRepository,
+                 csv_service: CSVService,
+                 ) -> None:
+        self.weather_repository: WeatherRepository = weather_repository
+        self.day_time_repository: DayTimeRepository = day_time_repository
+        self.condition_repository: ConditionRepository = condition_repository
+        self.wind_direction_repository: WindDirectionRepository = wind_direction_repository
+        self.weather_condition_repository: WeatherConditionRepository = weather_condition_repository
+        self.csv_service: CSVService = csv_service
 
-    @staticmethod
-    async def save_weather(weather_list: List[dict]):
+    async def save_weather(self, weather_list: list[dict]) -> None:
         for data in weather_list:
 
-            day_time = await day_time_repository.find_by(title=data.pop('day_time'))
-            conditions = [await condition_repository.find_by(title=condition) for condition in
+            day_time = await self.day_time_repository.find_by(title=data.pop('day_time'))
+            print(day_time)
+            conditions = [await self.condition_repository.find_by(title=condition) for condition in
                           data.pop('condition')]
-            wind_direction = await wind_direction_repository.find_by(direction=data.pop('wind_direction'))
+            wind_direction = await self.wind_direction_repository.find_by(direction=data.pop('wind_direction'))
 
-            weather = await weather_repository.create(
+            weather = await self.weather_repository.create(
                 Weather(**data, day_time_id=day_time.id, wind_direction_id=wind_direction.id)
             )
 
             for condition in conditions:
-                await weather_condition_repository.create(WeatherCondition(
+                await self.weather_condition_repository.create(WeatherCondition(
                     weather_id=weather.id,
                     condition_id=condition.id
                 ))
 
-    @staticmethod
-    async def get_weather_json(query: WeatherParameters):
-        if query.dict()['start_date']:
-            orm_models = await weather_repository.find_between(**query.dict())
+    async def get_weather_json(self, query: WeatherParameters) -> list[WeatherResponse]:
+        if query.start_date:
+            orm_models = await self.weather_repository.find_between(**query.dict())
         else:
-            orm_models = await weather_repository.find_all()
+            orm_models = await self.weather_repository.find_all()
         response_list = parse_obj_as(list[WeatherResponse], orm_models)
 
         return response_list
 
-    @staticmethod
-    async def get_weather_csv(query: WeatherParameters):
-        if query.dict()['start_date']:
-            orm_models: list[Weather] = await weather_repository.find_between(**query.dict())
+    async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
+        if query.start_date:
+            orm_models: list[Weather] = await self.weather_repository.find_between(**query.dict())
         else:
-            orm_models: list[Weather] = await weather_repository.find_all()
+            orm_models: list[Weather] = await self.weather_repository.find_all()
 
         response_list = parse_obj_as(list[WeatherResponse], orm_models)
 
-        stream = io.StringIO()
-
-        stream.write('date;day_time;t_min;t_max;pressure_min;pressure_max;humidity_min;'
-                     'humidity_max;wind_speed_min;wind_speed_max;wind_direction;url\n')
-
-        for model in response_list:
-            line = model_to_csv_line(model)
-            print(line)
-            stream.write(line)
-
-        return stream
-
-
-def model_to_csv_line(model: WeatherResponse):
-    return f'{model.date};{model.day_time.title};{model.t_min};{model.t_max};{model.pressure_min};' \
-           f'{model.pressure_max};{model.humidity_min};{model.humidity_max};{model.wind_speed_min};' \
-           f'{model.wind_speed_max};{model.wind_direction.direction};{model.url}\n'
+        response = self.csv_service.convert_weather_to_csv_response(response_list)
+        return response

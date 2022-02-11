@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -7,35 +9,33 @@ from src.orm.repositories.base_repository import BaseRepository
 
 
 class WeatherRepository(BaseRepository):
-    model = Weather
+    model: Weather = Weather
 
-    async def find_between(self, **kwargs):
+    async def find_between(self, start_date: date, end_date: date) -> list[Weather]:
         async with self.session_factory() as session:
             query = select(Weather). \
                 options(
                 selectinload(Weather.day_time),
                 selectinload(Weather.wind_direction),
+                selectinload(Weather.conditions),
             ). \
-                join(DayTime). \
-                join(WindDirection). \
-                filter(self.model.date >= kwargs['start_date'], self.model.date <= kwargs['end_date'])
+                filter(self.model.date >= start_date, self.model.date <= end_date)
 
             result = await session.execute(query)
-            result = result.scalars().all()
 
-            return result
+            return result.scalars().all()
 
-    async def find_all(self):
+    async def find_all(self) -> list[Weather]:
         async with self.session_factory() as session:
-            query = select(Weather). \
+            query = select(Weather, WindDirection.direction). \
                 options(
                 selectinload(Weather.day_time),
                 selectinload(Weather.wind_direction),
-            ). \
-                join(DayTime). \
-                join(WindDirection)
-
+                selectinload(Weather.conditions),
+            )
+            print('1' * 100)
+            print(query)
+            print('1' * 100)
             result = await session.execute(query)
-            result = result.scalars().all()
 
-            return result
+            return result.scalars().all()

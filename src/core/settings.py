@@ -3,7 +3,8 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_uri: str
+    database_url: str
+    head_url: str
 
 
 settings = Settings(_env_file=find_dotenv())

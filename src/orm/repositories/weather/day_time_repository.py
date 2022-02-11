@@ -3,4 +3,4 @@ from src.orm.repositories.base_repository import BaseRepository
 
 
 class DayTimeRepository(BaseRepository):
-    model = DayTime
+    model: DayTime = DayTime

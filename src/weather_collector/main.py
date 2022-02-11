@@ -1,20 +1,15 @@
 import asyncio
+from datetime import date
 
-from src.services.weather.weather_service import WeatherService
 from src.weather_collector.scrapper.weather_scrapper import WeatherScrapper
-from src.weather_collector.storage.csv_storage import CSVStorage
+from src.weather_collector.utils.date_utlis import get_dates
 
 
-async def main():
+async def main(data_list: list | date):
     weather_scrapper = WeatherScrapper()
-    weather = await weather_scrapper.scrap_weather()
-
-    service = WeatherService()
-    await service.save_weather(weather)
-
-    # writer = CSVStorage()
-    # await writer.save_content(result)
+    weather = await weather_scrapper.scrap_weather(data_list)
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    date_list = get_dates(start_date=date(2022, 1, 1), end_date=date(2022, 1, 15))
+    asyncio.run(main(date_list))

@@ -1,28 +1,17 @@
-import os
-from datetime import date, timedelta
+from datetime import date
 
-from dotenv import load_dotenv, find_dotenv
-
+from src.core.settings import settings
 from src.weather_collector.crawler.abstract_crawler import AbstractCrawler
 from src.weather_collector.http_client.async_client import AsyncClient
-from src.weather_collector.utils.utlis import get_previous_date
-
-load_dotenv(find_dotenv())
 
 
 class WeatherCrawler(AbstractCrawler):
     def __init__(self):
-        self.HEAD_URL = os.environ.get('HEAD_URL')
+        self.HEAD_URL = settings.head_url
 
-    async def crawl_content(self):
-
-        dates = self.get_dates(start_date=get_previous_date())
+    async def crawl_content(self, data_list: list[date]) -> (bytes, str, date):
         async with AsyncClient() as async_client:
-            for dte in dates:
-                url = f'{self.HEAD_URL}' + dte
-                yield await async_client.get_html(url), url, dte
+            for current_date in data_list:
+                url = f'{self.HEAD_URL}' + current_date.strftime(f'%Y-%m-%d')
 
-    @staticmethod
-    def get_dates(start_date=date(2003, 1, 1), end_date=date.today()):
-        for n in range(int((end_date - start_date).days)):
-            yield (start_date + timedelta(n)).strftime(f'%Y-%m-%d')
+                yield await async_client.get(url), url, date

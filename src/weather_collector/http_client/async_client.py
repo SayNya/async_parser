@@ -13,9 +13,10 @@ class AsyncClient(AbstractClient):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await super().__aexit__(exc_type, exc_val, exc_tb)
         await self.session.close()
 
     @timeit
-    async def get_html(self, url):
+    async def get(self, url: str) -> bytes:
         async with self.session.get(url) as response:
             return await response.read()
