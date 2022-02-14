@@ -2,7 +2,7 @@ import asyncio
 from datetime import date
 
 from src.weather_collector.scrapper.weather_scrapper import WeatherScrapper
-from src.weather_collector.utils.date_utlis import get_dates
+from src.utils.date_utlis import get_dates
 
 
 async def main():

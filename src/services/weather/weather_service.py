@@ -6,6 +6,7 @@ from src.orm.repositories import WeatherRepository, DayTimeRepository, Condition
 from src.orm.schemas.queries.weather import WeatherParameters
 from src.orm.schemas.responses.weather import WeatherResponse
 from src.services.csv.csv_service import CSVService
+from src.utils.string_utils import weather_model_to_csv_line
 
 
 class WeatherService:
@@ -53,5 +54,8 @@ class WeatherService:
 
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
         response_list = await self.get_weather_json(query)
-        response = self.csv_service.convert_weather_to_csv_response(response_list)
+        headers = 'date;day_time;t_min;t_max;conditions;pressure_min;pressure_max;humidity_min;' \
+                  'humidity_max;wind_speed_min;wind_speed_max;wind_direction;url\n'
+
+        response = self.csv_service.convert_data_to_csv_response(response_list, headers, weather_model_to_csv_line)
         return response
