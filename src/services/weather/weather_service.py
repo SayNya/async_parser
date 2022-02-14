@@ -29,9 +29,9 @@ class WeatherService:
         for data in weather_list:
 
             day_time = await self.day_time_repository.find_by(title=data.pop('day_time'))
-            print(day_time)
+
             conditions = [await self.condition_repository.find_by(title=condition) for condition in
-                          data.pop('condition')]
+                          data.pop('conditions')]
             wind_direction = await self.wind_direction_repository.find_by(direction=data.pop('wind_direction'))
 
             weather = await self.weather_repository.create(
@@ -45,17 +45,30 @@ class WeatherService:
                 ))
 
     async def get_weather_json(self, query: WeatherParameters) -> list[WeatherResponse]:
-        if query.start_date:
-            orm_models = await self.weather_repository.find_between(**query.dict())
-        else:
-            orm_models = await self.weather_repository.find_all()
-        response = [WeatherResponse.from_orm(x) for x in orm_models]
+
+        orm_models = await self.weather_repository.find_between(**query.dict()) if query.start_date \
+            else await self.weather_repository.find_all()
+
+        response = [WeatherResponse(
+            date=model.date,
+            t_min=model.t_min,
+            t_max=model.t_max,
+            pressure_min=model.pressure_min,
+            pressure_max=model.pressure_max,
+            humidity_min=model.humidity_min,
+            humidity_max=model.humidity_max,
+            wind_speed_min=model.wind_speed_min,
+            wind_speed_max=model.wind_speed_max,
+            url=model.url,
+            day_time=model.day_time.title,
+            wind_direction=model.wind_direction.direction,
+            conditions=[x.title for x in model.conditions]
+        ) for model in orm_models]
+
         return response
 
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
         response_list = await self.get_weather_json(query)
-        headers = 'date;day_time;t_min;t_max;conditions;pressure_min;pressure_max;humidity_min;' \
-                  'humidity_max;wind_speed_min;wind_speed_max;wind_direction;url\n'
 
-        response = self.csv_service.convert_data_to_csv_response(response_list, headers, weather_model_to_csv_line)
+        response = self.csv_service.get_csv_response(response_list)
         return response
