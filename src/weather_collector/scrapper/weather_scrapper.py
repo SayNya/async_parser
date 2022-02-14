@@ -10,7 +10,7 @@ class WeatherScrapper(AbstractScrapper):
         self.crawler = WeatherCrawler()
         self.parser = WeatherParser()
 
-    async def scrap_weather(self, date_list: list[date] | date) -> list[dict]:
+    async def scrap_content(self, date_list: list[date]) -> list[dict]:
         result = []
         async for html, url, current_date in self.crawler.crawl_content(date_list):
             data = await self.parser.parse_content(html, url, current_date)

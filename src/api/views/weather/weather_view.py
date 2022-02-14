@@ -25,7 +25,6 @@ router = APIRouter(
 async def read_weather_json(
         parameters_schema: WeatherParameters = Depends(),
         weather_service: WeatherService = Depends(Provide[Container.weather_service])) -> list[WeatherResponse]:
-    print(weather_service.__dict__)
     weather_json = await weather_service.get_weather_json(parameters_schema)
     return weather_json
 

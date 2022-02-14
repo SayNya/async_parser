@@ -3,7 +3,6 @@ from datetime import date
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from src.orm.models import WindDirection, DayTime
 from src.orm.models.weather import Weather
 from src.orm.repositories.base_repository import BaseRepository
 
@@ -27,15 +26,12 @@ class WeatherRepository(BaseRepository):
 
     async def find_all(self) -> list[Weather]:
         async with self.session_factory() as session:
-            query = select(Weather, WindDirection.direction). \
+            query = select(Weather). \
                 options(
                 selectinload(Weather.day_time),
                 selectinload(Weather.wind_direction),
                 selectinload(Weather.conditions),
             )
-            print('1' * 100)
-            print(query)
-            print('1' * 100)
             result = await session.execute(query)
 
             return result.scalars().all()

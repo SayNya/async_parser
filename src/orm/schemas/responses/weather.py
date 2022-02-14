@@ -18,9 +18,16 @@ class WeatherResponse(BaseModel):
     wind_speed_min: int
     wind_speed_max: int
     url: str
-    day_time: DayTimeResponse
-    wind_direction: DirectionResponse
-    conditions: list[ConditionResponse]
+    day_time: DayTimeResponse | str
+    wind_direction: DirectionResponse | str
+    conditions: list[ConditionResponse] | list[str]
+
+    def __init__(self, **kwargs):
+        kwargs['day_time'] = kwargs['day_time']['title']
+        kwargs['wind_direction'] = kwargs['wind_direction']['direction']
+        kwargs['conditions'] = [x['title'] for x in kwargs['conditions']]
+
+        super().__init__(**kwargs)
 
     class Config:
         orm_mode = True

@@ -1,5 +1,4 @@
 from fastapi.responses import StreamingResponse
-from pydantic import parse_obj_as
 
 from src.orm.models import Weather, WeatherCondition
 from src.orm.repositories import WeatherRepository, DayTimeRepository, ConditionRepository, WindDirectionRepository, \
@@ -49,17 +48,10 @@ class WeatherService:
             orm_models = await self.weather_repository.find_between(**query.dict())
         else:
             orm_models = await self.weather_repository.find_all()
-        response_list = parse_obj_as(list[WeatherResponse], orm_models)
-
-        return response_list
+        response = [WeatherResponse.from_orm(x) for x in orm_models]
+        return response
 
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
-        if query.start_date:
-            orm_models: list[Weather] = await self.weather_repository.find_between(**query.dict())
-        else:
-            orm_models: list[Weather] = await self.weather_repository.find_all()
-
-        response_list = parse_obj_as(list[WeatherResponse], orm_models)
-
+        response_list = await self.get_weather_json(query)
         response = self.csv_service.convert_weather_to_csv_response(response_list)
         return response
