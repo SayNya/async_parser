@@ -15,4 +15,4 @@ class WeatherCrawler(AbstractCrawler):
             for current_date in data_list:
                 url = f'{self.HEAD_URL}' + current_date.strftime(f'%Y-%m-%d')
 
-                yield await async_client.get(url), url, date
+                yield await async_client.get(url), url, current_date

@@ -1,5 +1,5 @@
+import csv
 import io
-from typing import Callable
 
 from fastapi.responses import StreamingResponse
 
@@ -7,14 +7,19 @@ from fastapi.responses import StreamingResponse
 class CSVService:
 
     @staticmethod
-    def convert_data_to_csv_response(data_list: list, headers: str, line_writer: Callable) -> StreamingResponse:
+    def get_csv_response(data_list: list, headers: str = '') -> StreamingResponse:
+        if not data_list:
+            raise ValueError('Empty data_list')
+
+        if not headers:
+            headers = list(data_list[0].schema()['properties'].keys())
+
         stream = io.StringIO()
 
-        stream.write(headers)
-
+        writer = csv.DictWriter(stream, fieldnames=headers)
+        writer.writeheader()
         for model in data_list:
-            line = line_writer(model)
-            stream.write(line)
+            writer.writerow(model.dict())
 
         response = StreamingResponse(iter([stream.getvalue()]), media_type='text/csv')
         response.headers['Content-Disposition'] = 'attachment; filename=export.csv'

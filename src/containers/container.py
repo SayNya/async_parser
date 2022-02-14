@@ -2,13 +2,17 @@ from dependency_injector import containers, providers
 
 from src.core.settings import settings
 from src.orm.async_database import AsyncDatabase
-from src.services.weather.weather_service import WeatherService
-from src.services.csv.csv_service import CSVService
 from src.orm.repositories import *
+from src.services.csv.csv_service import CSVService
+from src.services.weather.weather_service import WeatherService
 
 
 class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(modules=['src.api.views.weather.weather_view'])
+    wiring_config = containers.WiringConfiguration(
+        modules=[
+            'src.api.views.weather.weather_view',
+        ]
+    )
 
     async_database = providers.Singleton(AsyncDatabase, db_url=settings.database_url)
 
@@ -36,6 +40,7 @@ class Container(containers.DeclarativeContainer):
     csv_service = providers.Factory(
         CSVService
     )
+
     weather_service = providers.Factory(
         WeatherService,
         weather_repository=weather_repository,
