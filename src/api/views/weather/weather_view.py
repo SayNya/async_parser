@@ -13,8 +13,9 @@ router = APIRouter(
 
 
 @router.get(
-    '/json',
+    '/',
     status_code=200,
+    response_model=list[WeatherResponse],
     responses={
         404: {'description': 'Not Found'},
     },
@@ -24,7 +25,7 @@ router = APIRouter(
 async def read_weather_json(
         parameters_schema: WeatherParameters = Depends(),
         weather_service: WeatherService = Depends(Provide[Container.weather_service])) -> list[WeatherResponse]:
-    weather_json = await weather_service.get_weather_json(parameters_schema)
+    weather_json = await weather_service.get_weather_models(parameters_schema)
     return weather_json
 
 

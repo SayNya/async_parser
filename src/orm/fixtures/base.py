@@ -1,6 +1,7 @@
 import asyncio
 
-from src.orm.async_database import async_database
+from src.core.settings import settings
+from src.orm.async_database import AsyncDatabase
 from src.orm.models import *
 
 
@@ -22,6 +23,7 @@ class Base:
             await session.commit()
 
 
+async_database = AsyncDatabase(settings.database_url)
 base = Base(async_database.session)
 
 asyncio.run(base.create())

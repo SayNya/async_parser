@@ -43,16 +43,14 @@ class WeatherService:
                     condition_id=condition.id
                 ))
 
-    async def get_weather_json(self, query: WeatherParameters) -> list[WeatherResponse]:
+    async def get_weather_models(self, query: WeatherParameters) -> list[Weather]:
 
-        orm_models = await self.weather_repository.find_between(**query.dict()) if query.start_date \
+        return await self.weather_repository.find_between(**query.dict()) if query.start_date \
             else await self.weather_repository.find_all()
 
-        pydantic_models = [WeatherResponse.from_orm(model) for model in orm_models]
-        return pydantic_models
-
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
-        pydantic_models = await self.get_weather_json(query)
+        orm_models = await self.get_weather_models(query)
+        pydantic_models = [WeatherResponse.from_orm(model) for model in orm_models]
         translate_conditions = {
             'малооблачно': 'partly_cloudy',
             'кратковременный дождь': 'short_rain',
@@ -62,7 +60,7 @@ class WeatherService:
             'ясно': 'clear',
             'дождь': 'rain',
         }
-        results = []
+        dict_model_list = []
         for model in pydantic_models:
 
             full_conditions = {
@@ -82,6 +80,7 @@ class WeatherService:
                 full_conditions[translate_conditions[condition]] = True
 
             dict_model |= full_conditions
-            results.append(dict_model)
-        response = self.csv_service.get_csv_response(results)
+            dict_model_list.append(dict_model)
+
+        response = self.csv_service.get_csv_response(dict_model_list)
         return response
