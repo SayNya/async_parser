@@ -12,14 +12,14 @@ class CSVService:
             raise ValueError('Empty data_list')
 
         if not headers:
-            headers = list(data_list[0].schema()['properties'].keys())
+            headers = data_list[0].keys()
 
         stream = io.StringIO()
 
         writer = csv.DictWriter(stream, fieldnames=headers)
         writer.writeheader()
         for model in data_list:
-            writer.writerow(model.dict())
+            writer.writerow(model)
 
         response = StreamingResponse(iter([stream.getvalue()]), media_type='text/csv')
         response.headers['Content-Disposition'] = 'attachment; filename=export.csv'

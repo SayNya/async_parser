@@ -15,7 +15,6 @@ router = APIRouter(
 @router.get(
     '/json',
     status_code=200,
-    response_model=list[WeatherResponse],
     responses={
         404: {'description': 'Not Found'},
     },

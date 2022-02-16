@@ -48,26 +48,40 @@ class WeatherService:
         orm_models = await self.weather_repository.find_between(**query.dict()) if query.start_date \
             else await self.weather_repository.find_all()
 
-        response = [WeatherResponse(
-            date=model.date,
-            t_min=model.t_min,
-            t_max=model.t_max,
-            pressure_min=model.pressure_min,
-            pressure_max=model.pressure_max,
-            humidity_min=model.humidity_min,
-            humidity_max=model.humidity_max,
-            wind_speed_min=model.wind_speed_min,
-            wind_speed_max=model.wind_speed_max,
-            url=model.url,
-            day_time=model.day_time.title,
-            wind_direction=model.wind_direction.direction,
-            conditions=[x.title for x in model.conditions]
-        ) for model in orm_models]
-
-        return response
+        pydantic_models = [WeatherResponse.from_orm(model) for model in orm_models]
+        return pydantic_models
 
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
-        response_list = await self.get_weather_json(query)
+        pydantic_models = await self.get_weather_json(query)
+        translate_conditions = {
+            'малооблачно': 'partly_cloudy',
+            'кратковременный дождь': 'short_rain',
+            'снег': 'snow',
+            'облачно': 'cloudy',
+            'пасмурно': 'mainly_cloudy',
+            'ясно': 'clear',
+            'дождь': 'rain',
+        }
+        results = []
+        for model in pydantic_models:
 
-        response = self.csv_service.get_csv_response(response_list)
+            full_conditions = {
+                'partly_cloudy': False,
+                'short_rain': False,
+                'snow': False,
+                'cloudy': False,
+                'mainly_cloudy': False,
+                'clear': False,
+                'rain': False,
+            }
+            dict_model = model.dict()
+
+            conditions = dict_model.pop('conditions')
+
+            for condition in conditions:
+                full_conditions[translate_conditions[condition]] = True
+
+            dict_model |= full_conditions
+            results.append(dict_model)
+        response = self.csv_service.get_csv_response(results)
         return response
