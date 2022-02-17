@@ -1,11 +1,22 @@
 from fastapi.responses import StreamingResponse
 
+from src.enums.conditions import Conditions
 from src.orm.models import Weather, WeatherCondition
 from src.orm.repositories import WeatherRepository, DayTimeRepository, ConditionRepository, WindDirectionRepository, \
     WeatherConditionRepository
 from src.orm.schemas.queries.weather import WeatherParameters
 from src.orm.schemas.responses.weather import WeatherResponse
 from src.services.csv.csv_service import CSVService
+
+CONDITIONS_MAPPING = {
+    Conditions.PARTLY_CLOUDY.value: 'party_cloudy',
+    Conditions.SHORT_RAIN.value: 'short_rain',
+    Conditions.SNOW.value: 'snow',
+    Conditions.CLOUDY.value: 'cloudy',
+    Conditions.MAINLY_CLOUDY.value: 'mainly_cloudy',
+    Conditions.CLEAR.value: 'clear',
+    Conditions.RAIN.value: 'rain'
+}
 
 
 class WeatherService:
@@ -51,36 +62,37 @@ class WeatherService:
     async def get_weather_csv(self, query: WeatherParameters) -> StreamingResponse:
         orm_models = await self.get_weather_models(query)
         pydantic_models = [WeatherResponse.from_orm(model) for model in orm_models]
-        translate_conditions = {
-            'малооблачно': 'partly_cloudy',
-            'кратковременный дождь': 'short_rain',
-            'снег': 'snow',
-            'облачно': 'cloudy',
-            'пасмурно': 'mainly_cloudy',
-            'ясно': 'clear',
-            'дождь': 'rain',
-        }
+        dict_model_list = self.__weather_to_csv_dict(pydantic_models)
+
+        response = self.csv_service.get_csv_response(dict_model_list)
+        return response
+
+    def __weather_to_csv_dict(self, pydantic_models: list[WeatherResponse]) -> list[dict]:
         dict_model_list = []
         for model in pydantic_models:
-
-            full_conditions = {
-                'partly_cloudy': False,
-                'short_rain': False,
-                'snow': False,
-                'cloudy': False,
-                'mainly_cloudy': False,
-                'clear': False,
-                'rain': False,
-            }
             dict_model = model.dict()
 
             conditions = dict_model.pop('conditions')
 
-            for condition in conditions:
-                full_conditions[translate_conditions[condition]] = True
+            full_conditions = self.__destructure_conditions(conditions)
 
             dict_model |= full_conditions
             dict_model_list.append(dict_model)
+        return dict_model_list
 
-        response = self.csv_service.get_csv_response(dict_model_list)
-        return response
+    @staticmethod
+    def __destructure_conditions(conditions: list[str]) -> dict:
+        full_conditions = {
+            'partly_cloudy': False,
+            'short_rain': False,
+            'snow': False,
+            'cloudy': False,
+            'mainly_cloudy': False,
+            'clear': False,
+            'rain': False,
+        }
+
+        for condition in conditions:
+            full_conditions[CONDITIONS_MAPPING[condition]] = True
+
+        return full_conditions

@@ -7,7 +7,7 @@ from fastapi.responses import StreamingResponse
 class CSVService:
 
     @staticmethod
-    def get_csv_response(data_list: list, headers: str = '') -> StreamingResponse:
+    def get_csv_response(data_list: list[dict], headers: str = '') -> StreamingResponse:
         if not data_list:
             raise ValueError('Empty data_list')
 
