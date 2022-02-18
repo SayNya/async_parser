@@ -9,7 +9,7 @@ from src.orm.schemas.responses.weather import WeatherResponse
 from src.services.csv.csv_service import CSVService
 
 CONDITIONS_MAPPING = {
-    Conditions.PARTLY_CLOUDY.value: 'party_cloudy',
+    Conditions.PARTLY_CLOUDY.value: 'partly_cloudy',
     Conditions.SHORT_RAIN.value: 'short_rain',
     Conditions.SNOW.value: 'snow',
     Conditions.CLOUDY.value: 'cloudy',
