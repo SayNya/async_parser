@@ -18,5 +18,3 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
 
 COPY src src/
-
-RUN chmod +x entrypoint.sh
