@@ -1,5 +1,4 @@
-from contextlib import AbstractContextManager
-from typing import Callable
+from typing import Callable, AsyncContextManager
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -10,7 +9,7 @@ from src.orm.models.base import Base
 class BaseRepository:
     model: Base = None
 
-    def __init__(self, session_factory: Callable[..., AbstractContextManager[Session]]) -> None:
+    def __init__(self, session_factory: Callable[..., AsyncContextManager[Session]]) -> None:
         self.session_factory = session_factory
 
     async def create(self, model: model) -> model:

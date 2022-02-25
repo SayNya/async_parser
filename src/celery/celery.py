@@ -7,5 +7,3 @@ app = Celery(
     broker=settings.celery_broker_url,
     include=['src.celery.tasks']
 )
-
-app.conf.timezone = 'Europe/Minsk'

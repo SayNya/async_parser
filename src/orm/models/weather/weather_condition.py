@@ -7,7 +7,3 @@ class WeatherCondition(BaseIDModel):
     __tablename__ = 'weather_condition'
     weather_id = Column(Integer, ForeignKey('weather.id'), primary_key=True)
     condition_id = Column(Integer, ForeignKey('condition.id'), primary_key=True)
-
-    __table_args__ = (
-        UniqueConstraint('weather_id', 'condition_id'),
-    )
