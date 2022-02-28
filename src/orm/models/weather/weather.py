@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, Integer, ForeignKey, String
+from sqlalchemy import Column, Date, Integer, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from src.orm.models.base import BaseIDModel
@@ -24,3 +24,7 @@ class Weather(BaseIDModel):
     day_time = relationship('DayTime', back_populates='weather')
 
     conditions = relationship('Condition', back_populates='weather', secondary='weather_condition')
+
+    __table_args__ = (
+        UniqueConstraint('date', 'day_time_id'),
+    )
